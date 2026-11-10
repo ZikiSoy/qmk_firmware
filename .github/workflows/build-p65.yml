@@ -1,0 +1,32 @@
+name: Build EPOMAKER P65 (ziki)
+
+on:
+  push:
+    paths:
+      - 'keyboards/epomaker/p65/**'
+      - 'lib/rdmctmzt_common/**'
+      - '.github/workflows/build-p65.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/qmk/qmk_cli
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Compile
+        run: |
+          git config --global --add safe.directory '*'
+          make epomaker/p65:ziki
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: epomaker_p65_ziki
+          path: |
+            epomaker_p65_ziki.bin
+            epomaker_p65_ziki.hex
+          if-no-files-found: error
